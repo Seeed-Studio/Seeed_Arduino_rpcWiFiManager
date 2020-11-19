@@ -1,13 +1,13 @@
 {
-  "name": "WifiManager",
+  "name": "Seeed Arduino rpcWiFiManager",
   "keywords": "wifi, wi-fi",
-  "description": "ESP8266/ESP32 WiFi Connection manager with fallback web configuration portal",
+  "description": "Seeed rtl8720dn module WiFi Connection manager with fallback web configuration portal",
   "repository":
   {
     "type": "git",
-    "url": "https://github.com/bbx10/WiFiManager.git"
+    "url": "https://github.com/Seeed-Studio/Seeed_Arduino_rpcWiFiManager"
   },
   "frameworks": "arduino",
-  "platforms": "espressif8266",
-  "version": "0.99.9"
+  "platforms": "samd",
+  "version": "1.0.0"
 }
