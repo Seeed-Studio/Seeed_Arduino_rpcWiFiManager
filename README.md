@@ -1,4 +1,27 @@
 # WiFiManager
+
+## BETA TESTING FOR WIO TERMINAL
+
+- Follow [**Wio Terminal Network Wiki**](https://wiki.seeedstudio.com/Wio-Terminal-Network-Overview/) for latest firmware and libraries.
+
+- For now, some modifications are needed:
+  - navigate to `Seeed_Arduino_rpcWiFi/src`
+  - Open `WiFiSTA.cpp` with editor.
+  - Comment out the following code(~#207 to #212):
+
+```cpp
+    ret = wifi_set_pscan_chan((uint8_t *)&channel, &pscan_config, 1);
+    if (ret < 0)
+    {
+        log_e("connect failed!");
+        return WL_CONNECT_FAILED;
+    }
+```
+
+- Try out AutoConnect on Wio Terminal!
+
+------------------
+
 ESP32&&ESP8266 WiFi Connection manager with fallback web configuration portal
 
 

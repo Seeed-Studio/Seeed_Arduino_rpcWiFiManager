@@ -1,34 +1,37 @@
 #if defined(ESP8266)
 #include <ESP8266WiFi.h>          //https://github.com/esp8266/Arduino
+#elif defined(WIO_TERMINAL)
+#include <rpcWiFi.h>
 #else
 #include <WiFi.h>          //https://github.com/esp8266/Arduino
 #endif
 
 //needed for library
+#include <DNSServer.h>
 #if defined(ESP8266)
 #include <ESP8266WebServer.h>
 #else
 #include <WebServer.h>
 #endif
-#include <DNSServer.h>
 #include <WiFiManager.h>          //https://github.com/tzapu/WiFiManager
-
 // select which pin will trigger the configuration portal when set to LOW
 // ESP-01 users please note: the only pins available (0 and 2), are shared 
 // with the bootloader, so always set them HIGH at power-up
-#define TRIGGER_PIN 0
+#define TRIGGER_PIN WIO_KEY_C
 
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
+  while(!Serial);
   Serial.println("\n Starting");
 
-  pinMode(TRIGGER_PIN, INPUT);
+  pinMode(TRIGGER_PIN, INPUT_PULLUP);
 }
 
 
 void loop() {
+  delay(2000);
   // is configuration portal requested?
   if ( digitalRead(TRIGGER_PIN) == LOW ) {
     //WiFiManager
@@ -50,19 +53,15 @@ void loop() {
     //WITHOUT THIS THE AP DOES NOT SEEM TO WORK PROPERLY WITH SDK 1.5 , update to at least 1.5.1
     //WiFi.mode(WIFI_STA);
     
-    if (!wifiManager.startConfigPortal("OnDemandAP")) {
-      Serial.println("failed to connect and hit timeout");
+    if(!wifiManager.autoConnect("OnDemandAP")) {
+      Serial.println("failed to connect, we should reset as see if it connects");
       delay(3000);
-      //reset and try again, or maybe put it to deep sleep
-      ESP.restart();
-      delay(5000);
+      // NVIC_SystemReset();
     }
 
     //if you get here you have connected to the WiFi
     Serial.println("connected...yeey :)");
+    Serial.println(WiFi.localIP());
   }
-
-
   // put your main code here, to run repeatedly:
-
 }

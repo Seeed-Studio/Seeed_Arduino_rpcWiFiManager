@@ -16,6 +16,9 @@
 #if defined(ESP8266)
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
+#elif defined(WIO_TERMINAL)
+#include <rpcWiFi.h>
+#include <WebServer.h>
 #else
 #include <WiFi.h>
 #include <WebServer.h>
@@ -28,6 +31,11 @@ extern "C" {
   #include "user_interface.h"
 }
 #define ESP_getChipId()   (ESP.getChipId())
+#elif defined(WIO_TERMINAL)
+#define DEVICE_ID_WORD0  ((uint32_t)0x008061FC)
+#define DEVICE_ID_WORD1  ((uint32_t)0x00806010)
+#define DEVICE_ID_WORD2  ((uint32_t)0x00806014)
+#define DEVICE_ID_WORD3  ((uint32_t)0x00806018)
 #else
 #include <esp_wifi.h>
 #define ESP_getChipId()   ((uint32_t)ESP.getEfuseMac())
@@ -186,6 +194,10 @@ class WiFiManager
     int           getRSSIasQuality(int RSSI);
     boolean       isIp(String str);
     String        toStringIp(IPAddress ip);
+
+  #if defined(WIO_TERMINAL)
+    String        WioTerminalID();
+  #endif
 
     boolean       connect;
     boolean       _debug = true;

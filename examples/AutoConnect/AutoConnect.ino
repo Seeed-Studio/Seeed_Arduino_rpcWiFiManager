@@ -1,5 +1,7 @@
 #if defined(ESP8266)
 #include <ESP8266WiFi.h>          //https://github.com/esp8266/Arduino
+#elif defined(WIO_TERMINAL)
+#include <rpcWiFi.h>
 #else
 #include <WiFi.h>          //https://github.com/esp8266/Arduino
 #endif
@@ -17,12 +19,13 @@
 void setup() {
     // put your setup code here, to run once:
     Serial.begin(115200);
+    while(!Serial);
 
     //WiFiManager
     //Local intialization. Once its business is done, there is no need to keep it around
     WiFiManager wifiManager;
     //reset saved settings
-    //wifiManager.resetSettings();
+//    wifiManager.resetSettings();
     
     //set custom ip for portal
     //wifiManager.setAPStaticIPConfig(IPAddress(10,0,1,1), IPAddress(10,0,1,1), IPAddress(255,255,255,0));
@@ -38,6 +41,7 @@ void setup() {
     
     //if you get here you have connected to the WiFi
     Serial.println("connected...yeey :)");
+    Serial.println(WiFi.localIP());
 }
 
 void loop() {

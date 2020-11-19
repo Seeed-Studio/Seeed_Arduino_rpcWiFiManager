@@ -1,5 +1,7 @@
 #if defined(ESP8266)
 #include <ESP8266WiFi.h>          //https://github.com/esp8266/Arduino
+#elif defined(WIO_TERMINAL)
+#include <rpcWiFi.h>
 #else
 #include <WiFi.h>          //https://github.com/esp8266/Arduino
 #endif
@@ -11,7 +13,7 @@
 #else
 #include <WebServer.h>
 #endif
-#include "WiFiManager.h"          //https://github.com/tzapu/WiFiManager
+#include <WiFiManager.h>         //https://github.com/tzapu/WiFiManager
 
 void configModeCallback (WiFiManager *myWiFiManager) {
   Serial.println("Entered config mode");
@@ -22,13 +24,14 @@ void configModeCallback (WiFiManager *myWiFiManager) {
 
 void setup() {
   // put your setup code here, to run once:
+  while(!Serial);
   Serial.begin(115200);
   
   //WiFiManager
   //Local intialization. Once its business is done, there is no need to keep it around
   WiFiManager wifiManager;
   //reset settings - for testing
-  //wifiManager.resetSettings();
+  // wifiManager.resetSettings();
 
   //set callback that gets called when connecting to previous WiFi fails, and enters Access Point mode
   wifiManager.setAPCallback(configModeCallback);
@@ -38,15 +41,14 @@ void setup() {
   //here  "AutoConnectAP"
   //and goes into a blocking loop awaiting configuration
   if(!wifiManager.autoConnect()) {
-    Serial.println("failed to connect and hit timeout");
-    //reset and try again, or maybe put it to deep sleep
-    ESP.restart();
-    delay(1000);
+    Serial.println("failed to connect, we should reset as see if it connects");
+    delay(3000);
+    // NVIC_SystemReset();
   } 
 
   //if you get here you have connected to the WiFi
   Serial.println("connected...yeey :)");
- 
+  Serial.println(WiFi.localIP());
 }
 
 void loop() {
