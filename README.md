@@ -21,6 +21,7 @@ The configuration portal is of the captive variety, so on various devices it wil
 //needed for library
 #include <rpcWiFi.h>
 #include <DNSServer.h>
+#include <WebServer.h>
 #include <WiFiManager.h>  
 ```
 
