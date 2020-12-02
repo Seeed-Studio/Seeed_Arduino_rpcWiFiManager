@@ -127,7 +127,10 @@ void WiFiManager::setupConfigPortal() {
   server->on("/wifisave", std::bind(&WiFiManager::handleWifiSave, this));
   server->on("/i", std::bind(&WiFiManager::handleInfo, this));
   server->on("/r", std::bind(&WiFiManager::handleReset, this));
-  //server->on("/generate_204", std::bind(&WiFiManager::handle204, this));  //Android/Chrome OS captive portal check.
+  server->on("/hotspot-detect.html", std::bind(&WiFiManager::handleOthers, this));  // For iPhone
+  server->on("/connecttest.txt", std::bind(&WiFiManager::handleOthers, this));      // For Windows
+  server->on("/redirect", std::bind(&WiFiManager::handleOthers, this));             // For Windows
+  server->on("/generate_204", std::bind(&WiFiManager::handleOthers, this));         //Android/Chrome OS captive portal check.
   // server->on("/fwlink", std::bind(&WiFiManager::handleRoot, this));  //Microsoft captive portal. Maybe not needed. Might be handled by notFound handler.
   server->onNotFound (std::bind(&WiFiManager::handleNotFound, this));
   server->begin(); // Web server start
@@ -413,6 +416,27 @@ void WiFiManager::handleRoot() {
   if (captivePortal()) { // If caprive portal redirect instead of displaying the page.
     return;
   }
+
+  String page = FPSTR(HTTP_HEAD);
+  page.replace("{v}", "Options");
+  page += FPSTR(HTTP_SCRIPT);
+  page += FPSTR(HTTP_STYLE);
+  page += _customHeadElement;
+  page += FPSTR(HTTP_HEAD_END);
+  page += "<h1>";
+  page += _apName;
+  page += "</h1>";
+  page += F("<h3>WiFiManager</h3>");
+  page += FPSTR(HTTP_PORTAL_OPTIONS);
+  page += FPSTR(HTTP_END);
+
+  server->sendHeader("Content-Length", String(page.length()));
+  server->send(200, "text/html", page);
+
+}
+
+void WiFiManager::handleOthers() {
+  DEBUG_WM(F("Handle Others"));
 
   String page = FPSTR(HTTP_HEAD);
   page.replace("{v}", "Options");
